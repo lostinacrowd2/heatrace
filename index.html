@@ -65,16 +65,17 @@
       <canvas id="tempChart" class="w-full"></canvas>
     </div>
 
+    <!-- Compacter rate boxes -->
     <div class="grid grid-cols-2 gap-3 mb-6">
-      <div class="bg-zinc-900 rounded-2xl p-4 text-center">
-        <div class="text-xs text-zinc-400">RATE</div>
-        <div id="rate1" class="text-3xl font-bold text-orange-400">0.0</div>
-        <div class="text-xs text-zinc-400">°C/min</div>
+      <div class="bg-zinc-900 rounded-2xl px-3 py-3 text-center">
+        <div class="text-xs text-zinc-500">RATE</div>
+        <div id="rate1" class="text-2xl font-bold text-orange-400">0.0</div>
+        <div id="rateUnit1" class="text-xs text-zinc-500">°C/min</div>
       </div>
-      <div class="bg-zinc-900 rounded-2xl p-4 text-center">
-        <div class="text-xs text-zinc-400">RATE</div>
-        <div id="rate2" class="text-3xl font-bold text-orange-400">0.0</div>
-        <div class="text-xs text-zinc-400">°C/min</div>
+      <div class="bg-zinc-900 rounded-2xl px-3 py-3 text-center">
+        <div class="text-xs text-zinc-500">RATE</div>
+        <div id="rate2" class="text-2xl font-bold text-orange-400">0.0</div>
+        <div id="rateUnit2" class="text-xs text-zinc-500">°C/min</div>
       </div>
     </div>
 
@@ -91,7 +92,6 @@
       </button>
     </div>
 
-    <!-- Editable log table -->
     <div class="border-t border-zinc-700 pt-6">
       <h2 class="text-lg font-semibold mb-3 text-orange-300">📋 Logged Readings (tap numbers to edit)</h2>
       <div class="overflow-auto max-h-[300px] rounded-2xl bg-zinc-900 p-2">
@@ -135,6 +135,7 @@
       document.getElementById('unit1').textContent = currentUnit;
       document.getElementById('unit2').textContent = currentUnit;
       document.getElementById('unitSubtitle').textContent = `Who's heating faster? (°${currentUnit})`;
+      updateRateUnits();
       updateChart();
       calculateRates();
       renderLogTable();
@@ -142,11 +143,8 @@
     }
 
     function applyTheme() {
-      if (isDark) {
-        document.body.classList.remove('light');
-      } else {
-        document.body.classList.add('light');
-      }
+      if (isDark) document.body.classList.remove('light');
+      else document.body.classList.add('light');
     }
 
     function toggleTheme() {
@@ -157,6 +155,12 @@
 
     function cToF(c) { return (c * 9/5) + 32; }
     function fToC(f) { return (f - 32) * 5/9; }
+
+    function updateRateUnits() {
+      const unitText = `°${currentUnit}/min`;
+      document.getElementById('rateUnit1').textContent = unitText;
+      document.getElementById('rateUnit2').textContent = unitText;
+    }
 
     function toggleUnit() {
       const newUnit = currentUnit === "C" ? "F" : "C";
@@ -177,14 +181,13 @@
       document.getElementById('unit1').textContent = currentUnit;
       document.getElementById('unit2').textContent = currentUnit;
       document.getElementById('unitSubtitle').textContent = `Who's heating faster? (°${currentUnit})`;
-
       chart.options.scales.y.title.text = `Temperature (°${currentUnit})`;
+
+      updateRateUnits();
       updateChart();
       calculateRates();
       renderLogTable();
     }
-
-    // Rest of the functions (toggleTimer, resetTimer, updateLabels, logReading, etc.) remain the same as previous version
 
     function updateTimer() {
       if (!isRunning) return;
@@ -265,10 +268,18 @@
         document.getElementById('rate2').textContent = "0.0";
         return;
       }
+
       const points1 = data.map(d => ({time: d.time, y: d.temp1}));
       const points2 = data.map(d => ({time: d.time, y: d.temp2}));
+
       let rate1 = linearSlope(points1) * 60;
       let rate2 = linearSlope(points2) * 60;
+
+      // Adjust rate to match current display unit
+      if (currentUnit === "F") {
+        rate1 *= (9/5);
+        rate2 *= (9/5);
+      }
 
       document.getElementById('rate1').textContent = rate1.toFixed(2);
       document.getElementById('rate2').textContent = rate2.toFixed(2);
