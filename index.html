@@ -10,68 +10,93 @@
   <meta name="theme-color" content="#f59e0b">
   <style>
     body { font-family: system-ui; }
-    .temp-input { font-size: 1.5rem; }
+    .temp-input { font-size: 1.75rem; }
+    table input { font-size: 1rem; }
+    .light { --tw-bg-opacity: 1; background-color: rgb(249 250 251 / var(--tw-bg-opacity)); color: #111827; }
+    .light .bg-zinc-950 { background-color: #f3f4f6; }
+    .light .bg-zinc-900 { background-color: #e5e7eb; }
+    .light .bg-zinc-800 { background-color: #d1d5db; }
+    .light .text-white { color: #111827; }
+    .light .text-zinc-400 { color: #4b5563; }
+    .light .border-zinc-700 { border-color: #9ca3af; }
   </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen">
-  <div class="max-w-xl mx-auto p-4">
-    <div class="flex justify-between items-center mb-6">
+<body class="bg-zinc-950 text-white min-h-screen transition-colors">
+  <div class="max-w-xl mx-auto p-3">
+    <div class="flex justify-between items-center mb-4">
       <div>
-        <h1 class="text-4xl font-bold text-orange-400">HeatRace</h1>
-        <p class="text-zinc-400 text-sm">Who's heating faster?</p>
+        <h1 class="text-3xl font-bold text-orange-400">HeatRace</h1>
+        <p class="text-zinc-400 text-xs" id="unitSubtitle">Who's heating faster? (°C)</p>
       </div>
-      <div id="timer" class="text-5xl font-mono font-bold text-orange-400 tabular-nums">00:00</div>
+      <div class="flex items-center gap-3">
+        <div id="timer" class="text-4xl font-mono font-bold text-orange-400 tabular-nums">00:00</div>
+        <button onclick="toggleUnit()" id="unitBtn" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm font-medium border border-zinc-600">
+          °C
+        </button>
+      </div>
     </div>
 
-    <div class="flex gap-3 mb-6">
-      <button onclick="toggleTimer()" id="startBtn" class="flex-1 bg-orange-500 hover:bg-orange-600 py-4 rounded-2xl font-bold text-xl">START</button>
-      <button onclick="resetTimer()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 py-4 rounded-2xl font-bold text-xl">RESET</button>
+    <div class="flex gap-3 mb-5">
+      <button onclick="toggleTimer()" id="startBtn" class="flex-1 bg-orange-500 hover:bg-orange-600 py-3 rounded-2xl font-bold text-lg">START</button>
+      <button onclick="resetTimer()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 py-3 rounded-2xl font-bold text-lg">RESET</button>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mb-8">
-      <!-- Item 1 -->
-      <div class="bg-zinc-900 rounded-3xl p-5">
-        <input id="label1" value="Cast Iron" class="bg-transparent text-2xl font-bold w-full outline-none text-center" onchange="updateLabels()">
-        <div class="mt-4 flex items-center gap-3">
-          <input id="temp1" type="number" step="0.1" placeholder="Temp" class="temp-input bg-zinc-800 w-full text-center rounded-2xl p-4 text-4xl outline-none">
-          <span class="text-3xl text-zinc-400">°<span id="unit1">F</span></span>
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-zinc-900 rounded-3xl p-4">
+        <input id="label1" class="bg-transparent text-xl font-bold w-full outline-none text-center" onchange="updateLabels()">
+        <div class="mt-3 flex items-center gap-2">
+          <input id="temp1" type="number" step="0.1" class="temp-input bg-zinc-800 w-full text-center rounded-2xl p-3 outline-none" onfocus="this.value=''">
+          <span class="text-2xl text-zinc-400">°<span id="unit1">C</span></span>
         </div>
       </div>
 
-      <!-- Item 2 -->
-      <div class="bg-zinc-900 rounded-3xl p-5">
-        <input id="label2" value="Aluminum" class="bg-transparent text-2xl font-bold w-full outline-none text-center" onchange="updateLabels()">
-        <div class="mt-4 flex items-center gap-3">
-          <input id="temp2" type="number" step="0.1" placeholder="Temp" class="temp-input bg-zinc-800 w-full text-center rounded-2xl p-4 text-4xl outline-none">
-          <span class="text-3xl text-zinc-400">°<span id="unit2">F</span></span>
+      <div class="bg-zinc-900 rounded-3xl p-4">
+        <input id="label2" class="bg-transparent text-xl font-bold w-full outline-none text-center" onchange="updateLabels()">
+        <div class="mt-3 flex items-center gap-2">
+          <input id="temp2" type="number" step="0.1" class="temp-input bg-zinc-800 w-full text-center rounded-2xl p-3 outline-none" onfocus="this.value=''">
+          <span class="text-2xl text-zinc-400">°<span id="unit2">C</span></span>
         </div>
       </div>
     </div>
 
-    <button onclick="logReading()" class="w-full bg-green-600 hover:bg-green-500 py-5 rounded-3xl text-2xl font-bold mb-8">📍 LOG BOTH TEMPS NOW</button>
+    <button onclick="logReading()" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-3xl text-xl font-bold mb-6">📍 LOG BOTH TEMPS NOW</button>
 
-    <div class="mb-8">
+    <div class="mb-6">
       <canvas id="tempChart" class="w-full"></canvas>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 text-center mb-8">
-      <div class="bg-zinc-900 rounded-3xl p-6">
-        <div class="text-xs text-zinc-400 mb-1">RATE</div>
-        <div id="rate1" class="text-4xl font-bold text-orange-400">0.0</div>
-        <div class="text-sm text-zinc-400">°F/min</div>
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-zinc-900 rounded-2xl p-4 text-center">
+        <div class="text-xs text-zinc-400">RATE</div>
+        <div id="rate1" class="text-3xl font-bold text-orange-400">0.0</div>
+        <div class="text-xs text-zinc-400">°C/min</div>
       </div>
-      <div class="bg-zinc-900 rounded-3xl p-6">
-        <div class="text-xs text-zinc-400 mb-1">RATE</div>
-        <div id="rate2" class="text-4xl font-bold text-orange-400">0.0</div>
-        <div class="text-sm text-zinc-400">°F/min</div>
+      <div class="bg-zinc-900 rounded-2xl p-4 text-center">
+        <div class="text-xs text-zinc-400">RATE</div>
+        <div id="rate2" class="text-3xl font-bold text-orange-400">0.0</div>
+        <div class="text-xs text-zinc-400">°C/min</div>
       </div>
     </div>
 
-    <div id="winner" class="text-center text-2xl font-bold mb-8 hidden"></div>
+    <div id="winner" class="text-center text-xl font-bold mb-6 hidden"></div>
 
-    <div class="flex gap-3">
-      <button onclick="exportCSV()" class="flex-1 bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold">💾 Export CSV</button>
-      <button onclick="clearData()" class="flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-bold">🗑️ Clear</button>
+    <div class="flex gap-3 mb-4">
+      <button onclick="exportCSV()" class="flex-1 bg-blue-600 hover:bg-blue-500 py-3 rounded-2xl font-bold text-lg">💾 Export CSV</button>
+      <button onclick="clearData()" class="flex-1 bg-red-600 hover:bg-red-500 py-3 rounded-2xl font-bold text-lg">🗑️ Clear All</button>
+    </div>
+
+    <div class="flex justify-end mb-6">
+      <button onclick="toggleTheme()" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm font-medium border border-zinc-600">
+        🌙 Dark / ☀️ Light
+      </button>
+    </div>
+
+    <!-- Editable log table -->
+    <div class="border-t border-zinc-700 pt-6">
+      <h2 class="text-lg font-semibold mb-3 text-orange-300">📋 Logged Readings (tap numbers to edit)</h2>
+      <div class="overflow-auto max-h-[300px] rounded-2xl bg-zinc-900 p-2">
+        <table id="logTable" class="w-full text-sm"></table>
+      </div>
     </div>
   </div>
 
@@ -82,9 +107,10 @@
     let timerInterval = null;
     let elapsed = 0;
     let isRunning = false;
-    let label1 = "Cast Iron";
-    let label2 = "Aluminum";
-    let unit = "F";
+    let currentUnit = localStorage.getItem('heatrace_unit') || "C";
+    let label1 = localStorage.getItem('heatrace_label1') || "Fixture Old";
+    let label2 = localStorage.getItem('heatrace_label2') || "Fixture New";
+    let isDark = localStorage.getItem('heatrace_theme') !== 'light';
 
     const ctx = document.getElementById('tempChart').getContext('2d');
     chart = new Chart(ctx, {
@@ -93,8 +119,72 @@
         { label: label1, borderColor: '#f59e0b', tension: 0.3, data: [] },
         { label: label2, borderColor: '#22c55e', tension: 0.3, data: [] }
       ]},
-      options: { scales: { x: { title: { display: true, text: 'Time (seconds)' } }, y: { title: { display: true, text: `Temperature (°${unit})` } } }, plugins: { legend: { position: 'top' } } }
+      options: { 
+        scales: { 
+          x: { title: { display: true, text: 'Time (seconds)' } }, 
+          y: { title: { display: true, text: `Temperature (°${currentUnit})` } } 
+        }, 
+        plugins: { legend: { position: 'top' } } 
+      }
     });
+
+    function init() {
+      document.getElementById('label1').value = label1;
+      document.getElementById('label2').value = label2;
+      document.getElementById('unitBtn').textContent = `°${currentUnit}`;
+      document.getElementById('unit1').textContent = currentUnit;
+      document.getElementById('unit2').textContent = currentUnit;
+      document.getElementById('unitSubtitle').textContent = `Who's heating faster? (°${currentUnit})`;
+      updateChart();
+      calculateRates();
+      renderLogTable();
+      applyTheme();
+    }
+
+    function applyTheme() {
+      if (isDark) {
+        document.body.classList.remove('light');
+      } else {
+        document.body.classList.add('light');
+      }
+    }
+
+    function toggleTheme() {
+      isDark = !isDark;
+      localStorage.setItem('heatrace_theme', isDark ? 'dark' : 'light');
+      applyTheme();
+    }
+
+    function cToF(c) { return (c * 9/5) + 32; }
+    function fToC(f) { return (f - 32) * 5/9; }
+
+    function toggleUnit() {
+      const newUnit = currentUnit === "C" ? "F" : "C";
+      const convert = confirm(`Switch to °${newUnit}?\n\nConvert all existing logged data to °${newUnit}? (Cancel = keep numbers, just change display)`);
+
+      if (convert) {
+        data = data.map(row => ({
+          time: row.time,
+          temp1: currentUnit === "C" ? cToF(row.temp1) : fToC(row.temp1),
+          temp2: currentUnit === "C" ? cToF(row.temp2) : fToC(row.temp2)
+        }));
+      }
+
+      currentUnit = newUnit;
+      localStorage.setItem('heatrace_unit', currentUnit);
+
+      document.getElementById('unitBtn').textContent = `°${currentUnit}`;
+      document.getElementById('unit1').textContent = currentUnit;
+      document.getElementById('unit2').textContent = currentUnit;
+      document.getElementById('unitSubtitle').textContent = `Who's heating faster? (°${currentUnit})`;
+
+      chart.options.scales.y.title.text = `Temperature (°${currentUnit})`;
+      updateChart();
+      calculateRates();
+      renderLogTable();
+    }
+
+    // Rest of the functions (toggleTimer, resetTimer, updateLabels, logReading, etc.) remain the same as previous version
 
     function updateTimer() {
       if (!isRunning) return;
@@ -127,11 +217,14 @@
     }
 
     function updateLabels() {
-      label1 = document.getElementById('label1').value || "Cast Iron";
-      label2 = document.getElementById('label2').value || "Aluminum";
+      label1 = document.getElementById('label1').value.trim() || "Fixture Old";
+      label2 = document.getElementById('label2').value.trim() || "Fixture New";
+      localStorage.setItem('heatrace_label1', label1);
+      localStorage.setItem('heatrace_label2', label2);
       chart.data.datasets[0].label = label1;
       chart.data.datasets[1].label = label2;
       chart.update();
+      renderLogTable();
     }
 
     function logReading() {
@@ -143,7 +236,7 @@
       data.push({ time: elapsed, temp1: t1, temp2: t2 });
       updateChart();
       calculateRates();
-      // keep last values for convenience
+      renderLogTable();
     }
 
     function updateChart() {
@@ -167,12 +260,14 @@
     }
 
     function calculateRates() {
-      if (data.length < 2) return;
-
+      if (data.length < 2) {
+        document.getElementById('rate1').textContent = "0.0";
+        document.getElementById('rate2').textContent = "0.0";
+        return;
+      }
       const points1 = data.map(d => ({time: d.time, y: d.temp1}));
       const points2 = data.map(d => ({time: d.time, y: d.temp2}));
-
-      let rate1 = linearSlope(points1) * 60; // ° per minute
+      let rate1 = linearSlope(points1) * 60;
       let rate2 = linearSlope(points2) * 60;
 
       document.getElementById('rate1').textContent = rate1.toFixed(2);
@@ -180,51 +275,95 @@
 
       const winnerEl = document.getElementById('winner');
       if (rate1 > rate2) {
-        winnerEl.textContent = `🏆 ${label1} is winning!`;
-        winnerEl.className = "text-center text-2xl font-bold text-orange-400";
+        winnerEl.innerHTML = `🏆 <span class="text-orange-400">${label1}</span> is winning!`;
       } else if (rate2 > rate1) {
-        winnerEl.textContent = `🏆 ${label2} is winning!`;
-        winnerEl.className = "text-center text-2xl font-bold text-green-400";
+        winnerEl.innerHTML = `🏆 <span class="text-green-400">${label2}</span> is winning!`;
       } else {
         winnerEl.textContent = "It's a tie!";
       }
       winnerEl.classList.remove('hidden');
     }
 
+    function renderLogTable() {
+      const table = document.getElementById('logTable');
+      let html = `
+        <thead class="bg-zinc-800 sticky top-0">
+          <tr>
+            <th class="p-3 text-left text-xs font-medium">Time (s)</th>
+            <th class="p-3 text-left text-xs font-medium">${label1} (°${currentUnit})</th>
+            <th class="p-3 text-left text-xs font-medium">${label2} (°${currentUnit})</th>
+            <th class="p-3 w-16"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-700">
+      `;
+      data.forEach((row, i) => {
+        html += `
+          <tr class="hover:bg-zinc-800/50">
+            <td class="p-3 font-mono text-xs">${row.time}</td>
+            <td class="p-3">
+              <input type="number" step="0.1" value="${row.temp1.toFixed(1)}" 
+                     class="bg-zinc-800 text-center w-full p-2 rounded border border-zinc-700 focus:border-orange-400" 
+                     onchange="updateData(${i}, 'temp1', this.value)">
+            </td>
+            <td class="p-3">
+              <input type="number" step="0.1" value="${row.temp2.toFixed(1)}" 
+                     class="bg-zinc-800 text-center w-full p-2 rounded border border-zinc-700 focus:border-orange-400" 
+                     onchange="updateData(${i}, 'temp2', this.value)">
+            </td>
+            <td class="p-3">
+              <button onclick="deleteData(${i})" class="text-red-500 hover:text-red-400 text-xs font-medium">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody>';
+      table.innerHTML = html;
+    }
+
+    window.updateData = function(idx, field, val) {
+      const num = parseFloat(val);
+      if (!isNaN(num)) {
+        data[idx][field] = num;
+        updateChart();
+        calculateRates();
+        renderLogTable();
+      }
+    };
+
+    window.deleteData = function(idx) {
+      if (confirm("Delete this reading?")) {
+        data.splice(idx, 1);
+        updateChart();
+        calculateRates();
+        renderLogTable();
+      }
+    };
+
     function exportCSV() {
       if (data.length === 0) { alert("No data yet!"); return; }
-      let csv = `Time (seconds),${label1} (°${unit}),${label2} (°${unit})\n`;
-      data.forEach(row => {
-        csv += `${row.time},${row.temp1},${row.temp2}\n`;
-      });
+      let csv = `Time (seconds),${label1} (°${currentUnit}),${label2} (°${currentUnit})\n`;
+      data.forEach(row => csv += `${row.time},${row.temp1},${row.temp2}\n`);
       const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = URL.createObjectURL(blob);
       a.download = `heatrace_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
 
     function clearData() {
-      if (confirm("Clear all data?")) {
+      if (confirm("Clear ALL logged data?")) {
         data = [];
-        chart.data.labels = [];
-        chart.data.datasets[0].data = [];
-        chart.data.datasets[1].data = [];
-        chart.update();
-        document.getElementById('rate1').textContent = "0.0";
-        document.getElementById('rate2').textContent = "0.0";
+        updateChart();
+        calculateRates();
         document.getElementById('winner').classList.add('hidden');
+        renderLogTable();
       }
     }
 
-    // Register service worker for offline + install
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
-    // Tailwind ready
-    document.documentElement.style.setProperty('--tw-ring-color', '#f59e0b');
+    init();
   </script>
 </body>
 </html>
